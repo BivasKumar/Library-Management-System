@@ -1,0 +1,121 @@
+#include<iostream>
+#include<fstream>
+#include<string.h>
+
+using namespace std;
+
+class User
+{
+public:
+    char user_name[8], user_password[8];
+    bool Login();
+    void Prompt();
+    void Manager();
+};
+
+bool User::Login()
+{
+    User U1;
+    cout << "Enter User Name: ";
+    cin >> U1.user_name;
+    cout << "Enter User Password: ";
+    cin >> U1.user_password;
+    ifstream file("user.dat", ios::in | ios::binary);
+    if(!file.is_open())
+    {
+        cout << "Error: File 'user.dat' not found!\n";
+        system("pause");
+    }
+    else
+    {
+        User U2;
+        while(file.read((char*)&U2, sizeof(U2)))
+        {
+            if(strcmp(U2.user_name, U1.user_name) == 0 && strcmp(U2.user_password, U1.user_password) == 0)
+            {
+                cout << "Access Granted!\n";
+                file.close();
+                system("pause");
+                return true;
+            }
+            else
+            {
+                cout << "Access Denied!\n";
+                file.close();
+                system("pause");
+                return false;
+            }
+        }
+    }
+}
+
+void User::Prompt()
+{
+    system("cls");
+    char choice;
+    cout << "\nDo you wish to change your User Name and Password? (Y/N): ";
+    cin >> choice;
+    if(choice == 'Y' || choice == 'y')
+    {
+        Manager();
+    }
+    else;
+}
+
+void User::Manager()
+{
+    system("cls");
+    User U1;
+    cout << "Enter current User Name: ";
+    cin >> U1.user_name;
+    cout << "Enter current User Password: ";
+    cin >> U1.user_password;
+    ifstream in_file("user.dat", ios::in | ios::binary);
+    if(!in_file.is_open())
+    {
+        cout << "Error: File 'user.dat' not found!\n";
+        system("pause");
+    }
+    else
+    {
+        User U2, U3;
+        while(in_file.read((char*)&U2, sizeof(U2)))
+        {
+            if(strcmp(U2.user_name, U1.user_name) == 0 && strcmp(U2.user_password, U1.user_password) == 0)
+            {
+                system("cls");
+                cout << "Enter new User Name: ";
+                cin >> U3.user_name;
+                cout << "Enter new User Password: ";
+                cin >> U3.user_password;
+                ofstream out_file("user.dat", ios::out | ios::trunc | ios::binary);
+                out_file.write((char*)&U3, sizeof(U3));
+                out_file.close();
+                cout << "\nYour login details has been successfully updated!\n";
+                system("pause");
+            }
+            else
+            {
+                cout << "Error: User Name and/or Password doesn't match!\n";
+                system("pause");
+            }
+        }
+    }
+    in_file.close();
+}
+
+int main()
+{
+    bool access;
+    User U;
+    access = U.Login();
+    if(access)
+    {
+        U.Prompt();
+    }
+    else
+    {
+        system("exit");
+    }
+    return EXIT_SUCCESS;
+}
