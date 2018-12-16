@@ -1,0 +1,46 @@
+#include <iostream>
+#include <fstream>
+#include <string.h>
+
+using namespace std;
+
+class Defaults
+{
+private:
+    char user_password[9];
+public:
+    Defaults();
+    char user_name[9];
+    void Reset();
+};
+
+Defaults::Defaults()
+{
+    strcpy(user_name, "admin");
+    strcpy(user_password, "admin");
+}
+
+void Defaults::Reset()
+{
+    system("cls");
+    ofstream file("user.dat", ios::out | ios::trunc | ios::binary);
+    if(!file.is_open())
+    {
+        cout << "Error: File 'user.dat' not found!\n";
+    }
+    else
+    {
+        Defaults D;
+        file.write((char*)&D, sizeof(D));
+        cout << "User Name and Password were successfully reset to defaults(\"admin\", \"admin\")!\n";
+    }
+    file.close();
+}
+
+int main()
+{
+    Defaults C;
+    C.Reset();
+    system("pause");
+    return EXIT_SUCCESS;
+}
