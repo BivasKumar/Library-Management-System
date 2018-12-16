@@ -1,0 +1,1093 @@
+#include<iostream>
+#include<fstream>
+#include<string.h>
+
+using namespace std;
+
+void Admin_menu();
+void Book_menu();
+void Issuer_menu();
+void Underline();
+void Credits();
+
+class User
+{
+private:
+    char user_password[9];
+public:
+    char user_name[9];
+    bool Login();
+    void Prompt();
+    void Manager();
+};
+
+bool User::Login()
+{
+    system("cls");
+    User U1;
+    bool verify;
+    cout << "*Please login to proceed further!\n*Default User Name and Password is 'admin' and 'admin'.";
+    Underline();
+    cout << "\nUser Name: ";
+    cin.getline(U1.user_name, 9);
+    cout << "User Password: ";
+    cin.getline(U1.user_password, 9);
+    ifstream file("user.dat", ios::in | ios::binary);
+    if(!file.is_open())
+    {
+        cout << "\nError: File 'user.dat' not found!\n";
+    }
+    else
+    {
+        User U2;
+        while(file.read((char*) &U2, sizeof(U2)))
+        {
+            if(strcmp(U2.user_name, U1.user_name) == 0 && strcmp(U2.user_password, U1.user_password) == 0)
+            {
+                cout << "\nAccess Granted!\n";
+                file.close();
+                verify = true;
+            }
+            else
+            {
+                cout << "\nAccess Denied!\n";
+                file.close();
+                verify = false;
+            }
+        }
+    }
+    system("pause");
+    return verify;
+}
+
+void User::Prompt()
+{
+    system("cls");
+    char choice;
+    cout << "*Maximum length of User Name & Password is 8 characters!";
+    Underline();
+    cout << "\nDo you wish to change current User Name and Password? (Y/N): ";
+    cin >> choice;
+    if(choice == 'Y' || choice == 'y')
+    {
+        Manager();
+    }
+    else
+    {
+        Admin_menu();
+    }
+}
+
+void User::Manager()
+{
+again:
+    system("cls");
+    User U1;
+    cout << "Current User Name: ";
+    cin >> U1.user_name;
+    cout << "Current User Password: ";
+    cin >> U1.user_password;
+    ifstream in_file("user.dat", ios::in | ios::binary);
+    if(!in_file.is_open())
+    {
+        cout << "Error: File 'user.dat' not found!\n";
+        system("pause");
+    }
+    else
+    {
+        User U2, U3;
+        while(in_file.read((char*) &U2, sizeof(U2)))
+        {
+            if(strcmp(U2.user_name, U1.user_name) == 0 && strcmp(U2.user_password, U1.user_password) == 0)
+            {
+                system("cls");
+                cout << "New User Name: ";
+                cin >> U3.user_name;
+                cout << "New User Password: ";
+                cin >> U3.user_password;
+                ofstream out_file("user.dat", ios::out | ios::trunc | ios::binary);
+                out_file.write((char*) &U3, sizeof(U3));
+                out_file.close();
+                cout << "\nYour login details has been successfully updated!\n";
+                system("pause");
+            }
+            else
+            {
+                cout << "\nError: Incorrect User Name or Password!\n";
+                system("pause");
+                goto again;
+            }
+        }
+    }
+    in_file.close();
+    Admin_menu();
+}
+
+class Books
+{
+public:
+    char book_catergory[15], book_name[80], book_author[35], book_publisher[25];
+    int book_quantity, book_price;
+    void Add_book();
+    void Search_book();
+    void Show_db();
+    void Modify_db();
+    void Clear_db();
+};
+
+void Books::Add_book()
+{
+again:
+    system("cls");
+    Books B;
+    char category[15];
+    int quantity;
+    cout << "Book category(Academic, Fictional, Biography): ";
+    cin >> category;
+    if(strcmp(category, "Academic") == 0 || strcmp(category, "academic") == 0)
+    {
+        ofstream file("academic.dat", ios::out | ios::app | ios::binary);
+        if(!file.is_open())
+        {
+            cout << "\nError: File 'academic.dat' not found!\n";
+            system("pause");
+        }
+        else
+        {
+            cout << "Total book quantity: ";
+            cin >> quantity;
+            for(int i = 0; i < quantity; i++)
+            {
+                cin.ignore();
+                cout << "\nBook Name: ";
+                cin.getline(B.book_name, 80);
+                cout << "Book Publisher: ";
+                cin.getline(B.book_publisher, 25);
+                cout << "Book Author: ";
+                cin.getline(B.book_author, 35);
+                cout << "Book Quantity: ";
+                cin >> B.book_quantity;
+                cout << "Book Price: ";
+                cin >> B.book_price;
+                file.write((char*) &B, sizeof(B));
+            }
+        }
+        file.close();
+    }
+    else if(strcmp(category, "Fictional") == 0 || strcmp(category, "fictional") == 0)
+    {
+        ofstream file("fictional.dat", ios::out | ios::app | ios::binary);
+        if(!file.is_open())
+        {
+            cout << "\nError: File 'fictional.dat' not found!\n";
+            system("pause");
+        }
+        else
+        {
+            cout << "Total book quantity: ";
+            cin >> quantity;
+            for(int i = 0; i < quantity; i++)
+            {
+                cin.ignore();
+                cout << "\nBook Name: ";
+                cin.getline(B.book_name, 80);
+                cout << "Book Publisher: ";
+                cin.getline(B.book_publisher, 25);
+                cout << "Book Author: ";
+                cin.getline(B.book_author, 35);
+                cout << "Book Quantity: ";
+                cin >> B.book_quantity;
+                cout << "Book Price: ";
+                cin >> B.book_price;
+                file.write((char*) &B, sizeof(B));
+            }
+        }
+        file.close();
+    }
+    else if(strcmp(category, "Biography") == 0 || strcmp(category, "biography") == 0)
+    {
+        ofstream file("biography.dat", ios::out | ios::app | ios::binary);
+        if(!file.is_open())
+        {
+            cout << "\nError: File 'biography.dat' not found!\n";
+            system("pause");
+        }
+        else
+        {
+            cout << "Total book quantity: ";
+            cin >> quantity;
+            for(int i = 0; i < quantity; i++)
+            {
+                cin.ignore();
+                cout << "\nBook Name: ";
+                cin.getline(B.book_name, 80);
+                cout << "Book Publisher: ";
+                cin.getline(B.book_publisher, 25);
+                cout << "Book Author: ";
+                cin.getline(B.book_author, 35);
+                cout << "Book Quantity: ";
+                cin >> B.book_quantity;
+                cout << "Book Price: ";
+                cin >> B.book_price;
+                file.write((char*) &B, sizeof(B));
+            }
+        }
+        file.close();
+    }
+    else
+    {
+        cout << "\nError: No such category exists!\n";
+        system("pause");
+        goto again;
+    }
+    cout << "\n";
+    system("pause");
+    Book_menu();
+}
+
+void Books::Search_book()
+{
+again:
+    system("cls");
+    bool c_empty = false, found;
+    char category[15];
+    cout << "Book category(Academic, Fictional, Biography): ";
+    cin >> category;
+    if(strcmp(category, "Academic") == 0 || strcmp(category, "academic") == 0)
+    {
+        ifstream file("academic.dat", ios::in | ios::ate | ios::binary);
+        if(!file.is_open())
+        {
+            cout << "\nError: File 'academic.dat' not found!";
+        }
+        else
+        {
+            int pos = file.tellg();
+            if(pos == 0)
+            {
+                cout << "\nThis category is empty!";
+                c_empty = true;
+            }
+            else
+            {
+                Books B0, B1;
+                file.seekg(ios::beg);
+                cin.ignore();
+                cout << "Enter Book Name: ";
+                cin.getline(B0.book_name, 80);
+                cout << "Enter Book Author: ";
+                cin.getline(B0.book_author, 35);
+                while(file.read((char*) &B1, sizeof(B1)))
+                {
+                    if(strcmp(B1.book_name, B0.book_name) == 0 && strcmp(B1.book_author, B0.book_author) == 0)
+                    {
+                        found = true;
+                        cout << "\nFound following data...";
+                        cout << "\n\n\tBook Name: " << B1.book_name;
+                        cout << "\n\tBook Publisher: " << B1.book_publisher;
+                        cout << "\n\tBook Author:" << B1.book_author;
+                        cout << "\n\tBook Quantity: " << B1.book_quantity;
+                        cout << "\n\tBook Price: " << B1.book_price;
+                    }
+                }
+            }
+        }
+        file.close();
+    }
+    else if(strcmp(category, "Fictional") == 0 || strcmp(category, "fictional") == 0)
+    {
+        ifstream file("fictional.dat", ios::in | ios::ate | ios::binary);
+        if(!file.is_open())
+        {
+            cout << "\nError: File 'fictional.dat' not found!";
+        }
+        else
+        {
+            int pos = file.tellg();
+            if(pos == 0)
+            {
+                cout << "\nThis category is empty!";
+                c_empty = true;
+            }
+            else
+            {
+                Books B0, B1;
+                file.seekg(ios::beg);
+                cin.ignore();
+                cout << "Book Name: ";
+                cin.getline(B0.book_name, 80);
+                cout << "Book Author: ";
+                cin.getline(B0.book_author, 35);
+                while(file.read((char*) &B1, sizeof(B1)))
+                {
+                    if(strcmp(B1.book_name, B0.book_name) == 0 && strcmp(B1.book_author, B0.book_author) == 0)
+                    {
+                        found = true;
+                        cout << "\nFound following data...";
+                        cout << "\n\n\tBook Name: " << B1.book_name;
+                        cout << "\n\tBook Publisher: " << B1.book_publisher;
+                        cout << "\n\tBook Author:" << B1.book_author;
+                        cout << "\n\tBook Quantity: " << B1.book_quantity;
+                        cout << "\n\tBook Price: " << B1.book_price;
+                    }
+                }
+            }
+        }
+        file.close();
+    }
+    else if(strcmp(category, "Biography") == 0 || strcmp(category, "biography") == 0)
+    {
+        ifstream file("biography.dat", ios::in | ios::ate | ios::binary);
+        if(!file.is_open())
+        {
+            cout << "\nError: File 'biography.dat' not found!";
+        }
+        else
+        {
+            int pos = file.tellg();
+            if(pos == 0)
+            {
+                cout << "\nThis category is empty!";
+                c_empty = true;
+            }
+            else
+            {
+                Books B0, B1;
+                file.seekg(ios::beg);
+                cin.ignore();
+                cout << "Book Name: ";
+                cin.getline(B0.book_name, 80);
+                cout << "Book Author: ";
+                cin.getline(B0.book_author, 35);
+                while(file.read((char*) &B1, sizeof(B1)))
+                {
+                    if(strcmp(B1.book_name, B0.book_name) == 0 && strcmp(B1.book_author, B0.book_author) == 0)
+                    {
+                        found = true;
+                        cout << "\nFound following data...";
+                        cout << "\n\n\tBook Name: " << B1.book_name;
+                        cout << "\n\tBook Publisher: " << B1.book_publisher;
+                        cout << "\n\tBook Author:" << B1.book_author;
+                        cout << "\n\tBook Quantity: " << B1.book_quantity;
+                        cout << "\n\tBook Price: " << B1.book_price;
+                    }
+                }
+            }
+        }
+        file.close();
+    }
+    else
+    {
+        cout << "\nError: No such category exists!\n";
+        system("pause");
+        goto again;
+    }
+    if(c_empty == false && found == false)
+    {
+        cout << "\nNo such book found!";
+    }
+    cout << "\n";
+    system("pause");
+    Book_menu();
+}
+
+void Books::Show_db()
+{
+again:
+    system("cls");
+    Books B;
+    char category[15];
+    cout << "Book category(Academic, Fictional, Biography): ";
+    cin >> category;
+    if(strcmp(category, "Academic") == 0 || strcmp(category, "academic") == 0)
+    {
+        ifstream file("academic.dat", ios::in | ios:: ate | ios::binary);
+        if(!file.is_open())
+        {
+            cout << "\nError: File 'academic.dat' not found!";
+        }
+        else
+        {
+            int pos = file.tellg();
+            if(pos == 0)
+            {
+                cout << "\nThis category is empty!";
+            }
+            else
+            {
+                file.seekg(ios::beg);
+                cout << "\nFound following data...";
+                while(file.read((char*) &B, sizeof(B)))
+                {
+                    cout << "\n\n\tBook Name: " << B.book_name;
+                    cout << "\n\tBook Publisher: " << B.book_publisher;
+                    cout << "\n\tBook Author: " << B.book_author;
+                    cout << "\n\tBook Quantity: " << B.book_quantity;
+                    cout << "\n\tBook Price: " << B.book_price;
+                }
+            }
+        }
+        file.close();
+    }
+    else if(strcmp(category, "Fictional") == 0 || strcmp(category, "fictional") == 0)
+    {
+        ifstream file("fictional.dat", ios::in | ios::ate | ios::binary);
+        if(!file.is_open())
+        {
+            cout << "\nError: File 'fictional.dat' not found!";
+        }
+        else
+        {
+            int pos = file.tellg();
+            if(pos == 0)
+            {
+                cout << "\nThis category is empty!";
+            }
+            else
+            {
+                file.seekg(ios::beg);
+                cout << "\nFound following data...";
+                while(file.read((char*) &B, sizeof(B)))
+                {
+                    cout << "\n\n\tBook Name: " << B.book_name;
+                    cout << "\n\tBook Publisher: " << B.book_publisher;
+                    cout << "\n\tBook Author: " << B.book_author;
+                    cout << "\n\tBook Quantity: " << B.book_quantity;
+                    cout << "\n\tBook Price: " << B.book_price;
+                }
+            }
+        }
+        file.close();
+    }
+    else if(strcmp(category, "Biography") == 0 || strcmp(category, "biography") == 0)
+    {
+        ifstream file("biography.dat", ios::in | ios::ate | ios::binary);
+        if(!file.is_open())
+        {
+            cout << "\nError: File 'biography.dat' not found!";
+        }
+        else
+        {
+            int pos = file.tellg();
+            if(pos == 0)
+            {
+                cout << "\nThis category is empty!";
+            }
+            else
+            {
+                file.seekg(ios::beg);
+                cout << "\nFound following books...";
+                while(file.read((char*) &B, sizeof(B)))
+                {
+                    cout << "\n\n\tBook Name: " << B.book_name;
+                    cout << "\n\tBook Publisher: " << B.book_publisher;
+                    cout << "\n\tBook Author: " << B.book_author;
+                    cout << "\n\tBook Quantity: " << B.book_quantity;
+                    cout << "\n\tBook Price: " << B.book_price;
+                }
+            }
+        }
+        file.close();
+    }
+    else
+    {
+        cout << "\nError: No such category exists!\n";
+        system("pause");
+        goto again;
+    }
+    cout << "\n";
+    system("pause");
+    Book_menu();
+}
+
+void Books::Modify_db()
+{
+again:
+    system("cls");
+    bool c_empty = false, found;
+    char category[15];
+    cout << "Book category(Academic, Fictional, Biography): ";
+    cin >> category;
+    if(strcmp(category, "Academic") == 0 || strcmp(category, "academic") == 0)
+    {
+        fstream file("academic.dat", ios::out | ios::in | ios::ate | ios::binary);
+        if(!file.is_open())
+        {
+            cout << "\nError: File 'academic.dat' not found!";
+        }
+        else
+        {
+            int pos = file.tellg();
+            if(pos == 0)
+            {
+                cout << "\nThis category is empty!";
+                c_empty = true;
+            }
+            else
+            {
+                int pos;
+                Books B0, B1, B2;
+                file.seekg(ios::beg);
+                cin.ignore();
+                cout << "Book Name: ";
+                cin.getline(B0.book_name, 80);
+                cout << "Book Author: ";
+                cin.getline(B0.book_author, 35);
+                while(file.read((char*) &B1, sizeof(B1)))
+                {
+                    if((strcmp(B0.book_name, B1.book_name) == 0) && (strcmp(B0.book_author, B1.book_author) == 0))
+                    {
+                        found = true;
+                        cout << "\n*Original data-";
+                        cout << "\n\tBook Name: " << B1.book_name;
+                        cout << "\n\tBook Publisher: " << B1.book_publisher;
+                        cout << "\n\tBook Author: " << B1.book_author;
+                        cout << "\n\tBook Quantity: " << B1.book_quantity;
+                        cout << "\n\tBook Price: " << B1.book_price;
+                        cout << "\n\n*Edit data-";
+                        cout << "\n\tBook Name: ";
+                        cin.getline(B2.book_name, 80);
+                        cout << "\tBook Publisher: ";
+                        cin.getline(B2.book_publisher, 25);
+                        cout << "\tBook Author: ";
+                        cin.getline(B2.book_author, 35);
+                        cout << "\tBook Quantity: ";
+                        cin >> B2.book_quantity;
+                        cout << "\tBook Price: ";
+                        cin >> B2.book_price;
+                        pos = file.tellg();
+                        file.seekg(pos - sizeof(B2));
+                        file.write((char*) &B2, sizeof(B2));
+                    }
+                }
+            }
+        }
+        file.close();
+    }
+    else if(strcmp(category, "Fictional") == 0 || strcmp(category, "fictional") == 0)
+    {
+        fstream file("fictional.dat", ios::out | ios::in | ios::ate | ios::binary);
+        if(!file.is_open())
+        {
+            cout << "\nError: File 'fictional.dat' not found!";
+        }
+        else
+        {
+            int pos = file.tellg();
+            if(pos == 0)
+            {
+                cout << "\nThis category is empty!";
+                c_empty = true;
+            }
+            else
+            {
+                int pos;
+                Books B0, B1, B2;
+                file.seekg(ios::beg);
+                cin.ignore();
+                cout << "Book Name: ";
+                cin.getline(B0.book_name, 80);
+                cout << "Book Author: ";
+                cin.getline(B0.book_author, 35);
+                while(file.read((char*) &B1, sizeof(B1)))
+                {
+                    if((strcmp(B0.book_name, B1.book_name)) == 0 && (strcmp(B0.book_author, B1.book_author) == 0))
+                    {
+                        found = true;
+                        cout << "\n*Original data-";
+                        cout << "\n\tBook Name: " << B1.book_name;
+                        cout << "\n\tBook Publisher: " << B1.book_publisher;
+                        cout << "\n\tBook Author: " << B1.book_author;
+                        cout << "\n\tBook Quantity: " << B1.book_quantity;
+                        cout << "\n\tBook Price: " << B1.book_price;
+                        cout << "\n\n*Edit data-";
+                        cout << "\n\tBook Name: ";
+                        cin.getline(B2.book_name, 80);
+                        cout << "\tBook Publisher: ";
+                        cin.getline(B2.book_publisher, 25);
+                        cout << "\tBook Author: ";
+                        cin.getline(B2.book_author, 35);
+                        cout << "\tBook Quantity: ";
+                        cin >> B2.book_quantity;
+                        cout << "\tBook Price: ";
+                        cin >> B2.book_price;
+                        pos = file.tellg();
+                        file.seekg(pos - sizeof(B2));
+                        file.write((char*) &B2, sizeof(B2));
+                    }
+                }
+            }
+            file.close();
+        }
+    }
+    else if(strcmp(category, "Biography") == 0 || strcmp(category, "biography") == 0)
+    {
+        fstream file("biography.dat", ios::out | ios::in | ios::ate | ios::binary);
+        if(!file.is_open())
+        {
+            cout << "\nError: File 'biography.dat' not found!";
+        }
+        else
+        {
+            int pos = file.tellg();
+            if(pos == 0)
+            {
+                cout << "\nThis category is empty!";
+                c_empty = true;
+            }
+            else
+            {
+                int pos;
+                Books B0, B1, B2;
+                file.seekg(ios::beg);
+                cin.ignore();
+                cout << "Book Name: ";
+                cin.getline(B0.book_name, 80);
+                cout << "Book Author: ";
+                cin.getline(B0.book_author, 35);
+                while(file.read((char*) &B1, sizeof(B1)))
+                {
+                    if((strcmp(B0.book_name, B1.book_name) == 0) && (strcmp(B0.book_author, B1.book_author) == 0))
+                    {
+                        found = true;
+                        cout << "\n*Original data-";
+                        cout << "\n\tBook Name: " << B1.book_name;
+                        cout << "\n\tBook Publisher: " << B1.book_publisher;
+                        cout << "\n\tBook Author: " << B1.book_author;
+                        cout << "\n\tBook Quantity: " << B1.book_quantity;
+                        cout << "\n\tBook Price: " << B1.book_price;
+                        cout << "\n\n*Edit data-";
+                        cout << "\n\tBook Name: ";
+                        cin.getline(B2.book_name, 80);
+                        cout << "\tBook Publisher: ";
+                        cin.getline(B2.book_publisher, 25);
+                        cout << "\tBook Author: ";
+                        cin.getline(B2.book_author, 35);
+                        cout << "\tBook Quantity: ";
+                        cin >> B2.book_quantity;
+                        cout << "\tBook Price: ";
+                        cin >> B2.book_price;
+                        pos = file.tellg();
+                        file.seekg(pos - sizeof(B2));
+                        file.write((char*) &B2, sizeof(B2));
+                    }
+                }
+            }
+        }
+        file.close();
+    }
+    else
+    {
+        cout << "\nError: No such category exists!\n";
+        system("pause");
+        goto again;
+    }
+    if(c_empty == false && found == false)
+    {
+        cout << "\nNo such book found!";
+    }
+    cout << "\n";
+    system("pause");
+    Book_menu();
+}
+
+void Books::Clear_db()
+{
+    bool access;
+    User U;
+    cin.ignore();
+    access = U.Login();
+    if(access)
+    {
+again:
+        system("cls");
+        char category[15];
+        cout << "Book category(Academic, Fictional, Biography): ";
+        cin >> category;
+        if(strcmp(category, "Academic") == 0 || strcmp(category, "academic") == 0)
+        {
+            ofstream file("academic.dat", ios::out | ios:: trunc | ios::binary);
+            if(!file.is_open())
+            {
+                cout << "\nError: File 'academic.dat' not found!\n";
+            }
+            else
+            {
+                cout << "\nTask successfully completed!";
+            }
+            file.close();
+        }
+        else if(strcmp(category, "Fictional") == 0 || strcmp(category, "fictional") == 0)
+        {
+            ofstream file("fictional.dat", ios::out | ios:: trunc | ios::binary);
+            if(!file.is_open())
+            {
+                cout << "\nError: File 'fictional.dat' not found!\n";
+            }
+            else
+            {
+                cout << "\nTask successfully completed!";
+            }
+            file.close();
+        }
+        else if(strcmp(category, "Biography") == 0 || strcmp(category, "biography") == 0)
+        {
+            ofstream file("Biography.dat", ios::out | ios:: trunc | ios::binary);
+            if(!file.is_open())
+            {
+                cout << "\nError: File 'biography.dat' not found!\n";
+            }
+            else
+            {
+                cout << "\nTask successfully completed!";
+            }
+            file.close();
+        }
+        else
+        {
+            cout << "\nError: No such category exists!\n";
+            system("pause");
+            goto again;
+        }
+        cout << "\n";
+        system("pause");
+        Book_menu();
+    }
+    else
+    {
+        Book_menu();
+    }
+}
+
+void Underline()
+{
+    cout << "\n";
+    for(int i = 0; i < 100; i++)
+    {
+        cout << "\xFE";
+    }
+    cout << "\n";
+}
+
+void Credits()
+{
+    system("cls");
+    cout << "*Credits-";
+    Underline();
+    cout << "Authors- " << "Aryan Singh & Bivas Kumar\n";
+    cout << "\nClass- XII\n";
+    cout << "\nSoftwares used-\n";
+    cout << "\t1. Code::Blocks IDE" << "\n\t2. TDM-GCC\n";
+    cout << "\nDescription-\n\tThis project was developed as an assignment for submission to CBSE\n";
+    system("pause");
+    Admin_menu();
+}
+
+void Admin_menu()
+{
+again:
+    int option;
+    system("cls");
+    cout << "*Administrator's Menu";
+    Underline();
+    cout << "\n1. Manage Database of Books\n2. Manage Database of Issuers\n3. Credits\n4. Quit(Log out)\n";
+    cout << "\n*Option number: ";
+    cin >> option;
+    switch(option)
+    {
+    case 1:
+        Book_menu();
+        break;
+    case 2:
+        Issuer_menu();
+        break;
+    case 3:
+        Credits();
+        break;
+    case 4:
+        break;
+    default:
+        cout << "\nError: Wrong option number!\n";
+        system("pause");
+        goto again;
+    }
+}
+
+void Book_menu()
+{
+again:
+    system("cls");
+    Books B;
+    int option;
+    cout << "*Manage your Database of Books from here";
+    Underline();
+    cout << "\n1. Add Books\n2. Search particular book\n3. Show Books\n4. Modify Books\n5. Clear Database of Books(Use with care!)\n6. Administrator's Menu\n";
+    cout << "\n*Option number: ";
+    cin >>  option;
+    switch(option)
+    {
+    case 1:
+        B.Add_book();
+        break;
+    case 2:
+        B.Search_book();
+        break;
+    case 3:
+        B.Show_db();
+        break;
+    case 4:
+        B.Modify_db();
+        break;
+    case 5:
+        B.Clear_db();
+        break;
+    case 6:
+        Admin_menu();
+        break;
+    default:
+        cout << "\nError: Wrong option number!\n";
+        system("pause");
+        goto again;
+    }
+}
+
+class Issuer
+{
+private:
+    char LIB_card_id[50];
+public:
+    char name[25], class_sec[7], book_name[80], issued_on[11], return_status[4];
+    int days;
+    void New_issuer();
+    void Show_db();
+    void Modify_db();
+    void Clear_db();
+};
+
+void Issuer::New_issuer()
+{
+    system("cls");
+    ofstream file("issuers.dat", ios::out | ios::trunc | ios::binary);
+    if(!file.is_open())
+    {
+        cout << "Error: File 'issuers.dat' not found!\n";
+    }
+    else
+    {
+        int total;
+        Issuer I;
+        cout << "Total number of issuers: ";
+        cin >> total;
+        for(int i = 0; i < total; i++)
+        {
+            cin.ignore();
+            cout << "\nLibrary Card ID: ";
+            cin.getline(I.LIB_card_id, 50);
+            cout << "Issuer's Name: ";
+            cin.getline(I.name, 25);
+            cout << "Issuer's Class/Sec: ";
+            cin.getline(I.class_sec, 7);
+            cout << "Book issued: ";
+            cin.getline(I.book_name, 80);
+            cout << "Date of Issue(DD/MM/YYYY): ";
+            cin.getline(I.issued_on, 11);
+            cout << "Issued for days: ";
+            cin >> I.days;
+            strcpy(I.return_status, "No");
+            file.write((char*) &I, sizeof(I));
+        }
+    }
+    file.close();
+    cout << "\n";
+    system("pause");
+    Issuer_menu();
+}
+
+void Issuer::Show_db()
+{
+    system("cls");
+    ifstream file("issuers.dat", ios::in | ios:: ate | ios::binary);
+    if(!file.is_open())
+    {
+        cout << "Error: File 'issuers.dat' not found!";
+    }
+    else
+    {
+        int pos = file.tellg();
+        if(pos == 0)
+        {
+            cout << "No record of Issuers!";
+        }
+        else
+        {
+            file.seekg(ios::beg);
+            Issuer I;
+            cout << "Found following data...";
+            while(file.read((char*) &I, sizeof(I)))
+            {
+                cout << "\n\n\tLibrary Card ID: " << I.LIB_card_id;
+                cout << "\n\tIssuer's Name: " << I.name;
+                cout << "\n\tIssuer's Class/Sec: " << I.class_sec;
+                cout << "\n\tBook Issued: " << I.book_name;
+                cout << "\n\tIssued on: " << I.issued_on;
+                cout << "\n\tIssued for days: " << I.days;
+                cout << "\n\tReturn status: " << I.return_status;
+            }
+        }
+    }
+    file.close();
+    cout << "\n";
+    system("pause");
+    Issuer_menu();
+}
+
+void Issuer::Modify_db()
+{
+    system("cls");
+    bool r_empty = false, found;
+    fstream file("issuers.dat", ios::in | ios::ate | ios::out | ios::binary);
+    if(!file.is_open())
+    {
+        cout << "Error: File 'user.dat' not found!";
+    }
+    else
+    {
+        int pos = file.tellg();
+        if(pos == 0)
+        {
+            cout << "No record of Issuers!";
+            r_empty = true;
+        }
+        else
+        {
+            file.seekg(ios::beg);
+            int position;
+            char L_C_ID[50];
+            Issuer I1, I2;
+            cin.ignore();
+            cout << "Library Card ID: ";
+            cin.getline(L_C_ID, 50);
+            while(file.read((char*) &I1, sizeof(I1)))
+            {
+                if(strcmp(L_C_ID, I1.LIB_card_id) == 0)
+                {
+                    found = true;
+                    cout << "\n*Original Data-";
+                    cout << "\n\tLibrary Card ID: " << I1.LIB_card_id;
+                    cout << "\n\tIssuer's Name: " << I1.name;
+                    cout << "\n\tIssuer's Class/Sec: " << I1.class_sec;
+                    cout << "\n\tBook Issued: " << I1.book_name;
+                    cout << "\n\tIssued on: " << I1.issued_on;
+                    cout << "\n\tIssued for days: " << I1.days;
+                    cout << "\n\tReturn status: " << I1.return_status;
+                    cout << "\n\n*Edit data-";
+                    cout << "\n\tLibrary Card ID: ";
+                    cin.getline(I2.LIB_card_id, 50);
+                    cout << "\tIssuer's Name: ";
+                    cin.getline(I2.name, 25);
+                    cout << "\tIssuer's Class/Sec: ";
+                    cin.getline(I2.class_sec, 7);
+                    cout << "\tBook issued: ";
+                    cin.getline(I2.book_name, 80);
+                    cout << "\tDate of Issue(DD/MM/YYYY): ";
+                    cin.getline(I2.issued_on, 11);
+                    cout << "\tReturn status(Yes/No): ";
+                    cin.getline(I2.return_status, 4);
+                    cout << "\tIssued for days: ";
+                    cin >> I2.days;
+                    position = file.tellg();
+                    file.seekg(position - sizeof(I2));
+                    file.write((char*) &I2, sizeof(I2));
+                }
+            }
+        }
+    }
+    file.close();
+    if(r_empty == false && found == false)
+    {
+        cout << "\nNo such Library Card ID found!";
+    }
+    cout << "\n";
+    system("pause");
+    Issuer_menu();
+}
+
+void Issuer::Clear_db()
+{
+    User U;
+    cin.ignore();
+    bool access = U.Login();
+    if(access)
+    {
+        system("cls");
+        ofstream file("issuers.dat", ios::out | ios::trunc | ios::binary);
+        if(!file.is_open())
+        {
+            cout << "Error: File 'issuers.dat' not found!";
+        }
+        else
+        {
+            cout << "Task successfully completed!";
+        }
+        file.close();
+        cout << "\n";
+        system("pause");
+        Issuer_menu();
+    }
+    else
+    {
+        Issuer_menu();
+    }
+}
+
+void Issuer_menu()
+{
+again:
+    system("cls");
+    Issuer I;
+    int option;
+    cout << "*Manage your Database of Issuers from here";
+    Underline();
+    cout << "\n1. New Issuer\n2. View Issuers Detail\n3. Modify Issuers\n4. Clear Database of Issuers(Use with care!)\n5. Administrator's Menu\n";
+    cout << "\n*Enter option number: ";
+    cin >> option;
+    switch(option)
+    {
+    case 1:
+        I.New_issuer();
+        break;
+    case 2:
+        I.Show_db();
+        break;
+    case 3:
+        I.Modify_db();
+        break;
+    case 4:
+        I.Clear_db();
+        break;
+    case 5:
+        Admin_menu();
+        break;
+    default:
+        cout << "\nError: Wrong option number!\n";
+        system("pause");
+        goto again;
+    }
+}
+
+int main()
+{
+again:
+    bool access;
+    User U;
+    access = U.Login();
+    if(access)
+    {
+        U.Prompt();
+    }
+    else
+    {
+        goto again;
+    }
+    return EXIT_SUCCESS;
+}
